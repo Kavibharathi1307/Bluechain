@@ -27,6 +27,18 @@ router.get('/project/:projectId', optionalAuth, async (req, res) => {
   }
 })
 
+// GET /api/audit/verify/integrity — must be before /:recordId to avoid shadowing
+router.get('/verify/integrity', optionalAuth, async (req, res) => {
+  try {
+    const records = await AuditRecord.find().sort({ timestamp: 1 })
+    const result = await verifyChain(records)
+    res.json(result)
+  } catch (err) {
+    console.error('Verify chain error:', err)
+    res.status(500).json({ error: 'Failed to verify chain' })
+  }
+})
+
 // GET /api/audit/:recordId
 router.get('/:recordId', optionalAuth, async (req, res) => {
   try {
@@ -36,18 +48,6 @@ router.get('/:recordId', optionalAuth, async (req, res) => {
   } catch (err) {
     console.error('Fetch audit record error:', err)
     res.status(500).json({ error: 'Failed to fetch audit record' })
-  }
-})
-
-// GET /api/audit/verify/integrity
-router.get('/verify/integrity', optionalAuth, async (req, res) => {
-  try {
-    const records = await AuditRecord.find().sort({ timestamp: 1 })
-    const result = await verifyChain(records)
-    res.json(result)
-  } catch (err) {
-    console.error('Verify chain error:', err)
-    res.status(500).json({ error: 'Failed to verify chain' })
   }
 })
 

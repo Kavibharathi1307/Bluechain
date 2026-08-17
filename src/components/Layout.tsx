@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Map,
@@ -11,6 +11,7 @@ import {
   Droplets,
   X,
 } from 'lucide-react'
+import { isAuthenticated, clearToken } from '../lib/api'
 import Sidebar from './Sidebar'
 import TopNav from './TopNav'
 
@@ -38,9 +39,20 @@ const titles: Record<string, string> = {
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
   const title = location.pathname.startsWith('/dashboard/projects/')
     ? 'Project Details'
     : titles[location.pathname] ?? 'Dashboard Overview'
+
+  if (!isAuthenticated()) {
+    navigate('/login', { replace: true })
+    return null
+  }
+
+  const handleLogout = () => {
+    clearToken()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100">
@@ -102,6 +114,7 @@ export default function Layout() {
             <div className="border-t border-white/10 p-3">
               <button
                 type="button"
+                onClick={handleLogout}
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-white/5 hover:text-white"
               >
                 <LogOut className="h-[18px] w-[18px]" />

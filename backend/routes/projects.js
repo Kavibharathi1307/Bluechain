@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import RestorationProject from '../models/RestorationProject.js'
-import { optionalAuth } from '../middleware/auth.js'
+import { optionalAuth, authMiddleware } from '../middleware/auth.js'
 
 const router = Router()
 
@@ -28,7 +28,7 @@ router.get('/:id', optionalAuth, async (req, res) => {
 })
 
 // POST /api/projects
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const project = await RestorationProject.create(req.body)
     res.status(201).json(project)
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
 })
 
 // PUT /api/projects/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const project = await RestorationProject.findOneAndUpdate(
       { id: req.params.id },

@@ -1,11 +1,25 @@
 import { Bell, ChevronDown, Menu, Search } from 'lucide-react'
+import { getCurrentUser } from '../lib/api'
 
 interface TopNavProps {
   title: string
   onMenuClick: () => void
 }
 
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 export default function TopNav({ title, onMenuClick }: TopNavProps) {
+  const user = getCurrentUser()
+  const displayName = user?.name?.split(' ').pop() ?? 'User'
+  const initials = user?.name ? getInitials(user.name) : 'U'
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
       <button
@@ -62,10 +76,10 @@ export default function TopNav({ title, onMenuClick }: TopNavProps) {
           className="flex items-center gap-2 rounded-lg border border-slate-200 py-1.5 pl-1.5 pr-2.5 hover:bg-slate-50"
         >
           <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-ocean-600 text-xs font-bold text-white">
-            AR
+            {initials}
           </span>
           <span className="hidden text-sm font-medium text-slate-700 sm:block">
-            Ananya
+            {displayName}
           </span>
           <ChevronDown className="hidden h-4 w-4 text-slate-400 sm:block" />
         </button>

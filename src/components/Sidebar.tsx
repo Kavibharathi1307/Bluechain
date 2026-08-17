@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Map,
@@ -12,6 +12,7 @@ import {
   Settings,
   Droplets,
 } from 'lucide-react'
+import { clearToken, getCurrentUser } from '../lib/api'
 
 const navSections = [
   {
@@ -41,6 +42,22 @@ const navSections = [
 ]
 
 export default function Sidebar() {
+  const navigate = useNavigate()
+  const user = getCurrentUser()
+  const displayName = user?.name ?? 'Dr. Ananya Rao'
+  const displayRole = user?.role === 'admin' ? 'Research Coordinator' : user?.role ?? 'Research Coordinator'
+  const initials = displayName
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  const handleLogout = () => {
+    clearToken()
+    navigate('/login', { replace: true })
+  }
+
   return (
     <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-abyss-900 text-slate-300">
       <div className="flex items-center gap-3 px-5 h-16 border-b border-white/10">
@@ -92,19 +109,20 @@ export default function Sidebar() {
       <div className="border-t border-white/10 p-3">
         <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
           <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-ocean-600 text-sm font-bold text-white">
-            AR
+            {initials}
           </div>
           <div className="min-w-0 flex-1 leading-tight">
             <p className="truncate text-sm font-semibold text-white">
-              Dr. Ananya Rao
+              {displayName}
             </p>
             <p className="truncate text-[11px] text-slate-400">
-              Research Coordinator
+              {displayRole}
             </p>
           </div>
           <button
             type="button"
             title="Sign out"
+            onClick={handleLogout}
             className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
           >
             <LogOut className="h-4 w-4" />

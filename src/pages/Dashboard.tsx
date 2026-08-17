@@ -4,14 +4,18 @@ import HealthScoreCard from '../components/HealthScoreCard'
 import ActiveAlerts from '../components/ActiveAlerts'
 import AnalyticsSection from '../components/AnalyticsSection'
 import ProjectCards from '../components/ProjectCards'
+import { getCurrentUser } from '../lib/api'
 
 export default function Dashboard() {
+  const user = getCurrentUser()
+  const firstName = user?.name?.split(' ')[0] ?? 'Dr. Rao'
+
   return (
     <div className="mx-auto max-w-[1400px] space-y-6 p-4 sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-slate-900">
-            Welcome back, Dr. Rao
+            Welcome back, {firstName}
           </h2>
           <p className="text-[13px] text-slate-500">
             Here's the latest intelligence across your coastal restoration
